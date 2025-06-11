@@ -1,0 +1,331 @@
+# Youth Safe Space Platform – MVP Dummy
+
+## Purpose
+A fun, inclusive, and safe online space for youth (13–24) to chat, learn, get support, and express themselves, with strong AI moderation and privacy by default.
+
+---
+
+## Features (MVP)
+- AI-powered chatbot for support, advice, and fun chats
+- Anonymous, moderated chatrooms
+- Interactive quizzes/games
+- Personal profile (no real names required)
+- Community guidelines and emergency help
+- AI content moderation for all user inputs
+
+---
+
+## Project Structure
+```
+/youth-safe-space
+/components
+Chatbot.js
+Quiz.js
+ModerationGuard.js
+Navbar.js
+ProfileCard.js
+/pages
+index.js
+chat.js
+quiz.js
+profile.js
+privacy.js
+help.js
+/public
+/images
+/styles
+globals.css
+privacy-policy.md
+community-guidelines.md
+README.md
+```
+
+---
+
+## Wireframe Sketches
+
+### Home Page
+```
++---------------------------------------------------+
+| Youth Safe Space |
+|---------------------------------------------------|
+| [ Chat ] [ Quizzes ] [ Profile ] [ Help ] |
+|---------------------------------------------------|
+| 👋 Welcome, Youth! |
+| [Start Chatting] [Take a Quiz] |
+| |
+| "This is a safe and fun place for you to connect |
+| and grow. Your privacy comes first." |
++---------------------------------------------------+
+```
+
+### Chat Page
+```
++---------------------------------------------------+
+| [Back] Chatbot & Community Chat |
+|---------------------------------------------------|
+| [AI Bot]: How can I help you today? |
+| [You]: ... |
+| |
+| [Community Chatroom] |
+| (All messages AI moderated for safety) |
+| |
++---------------------------------------------------+
+```
+
+### Quiz/Game Page
+```
++---------------------------------------------------+
+| [Back] Fun Quizzes & Games |
+|---------------------------------------------------|
+| [Start "Discover Yourself" Quiz] |
+| [Start "Career Explorer" Game] |
++---------------------------------------------------+
+```
+
+### Profile Page
+```
++---------------------------------------------------+
+| [Back] Your Profile |
+|---------------------------------------------------|
+| Avatar: [Edit] |
+| Nickname: "Dreamer123" |
+| Badges: "Kind Helper", "Quiz Master" |
+| Privacy: [View/Edit Settings] |
++---------------------------------------------------+
+```
+
+---
+
+## Example User Journey
+
+1. **Sara (16) signs up anonymously as "StarSara"**
+2. She takes the "Discover Yourself" quiz for fun.
+3. She chats with the AI bot about school stress.
+4. She joins a group chat to talk about hobbies.
+5. The AI moderation prevents any bullying/harmful content.
+6. Sara reads the privacy page and feels secure.
+
+---
+
+## Privacy & Safety (Summary)
+
+- No real names/emails in public
+- All chats and content AI-moderated + human review
+- Quick-report and emergency buttons
+- User data encrypted and never sold
+- Clear, simple privacy policy
+
+---
+
+## Expansion Ideas
+
+- AI-powered art/writing tools
+- Event calendar
+- More quizzes/games
+- Custom avatars and more badges
+
+---
+
+import Navbar from '../components/Navbar';
+
+export default function Home() {
+return (
+<div>
+<Navbar />
+<main style={{ padding: "2rem", textAlign: "center" }}>
+<h1>👋 Welcome to Youth Safe Space!</h1>
+<p>
+A fun, safe community for youth and young adults.<br />
+Chat, play, learn, and express yourself—always safe and always supported!
+</p>
+<div style={{ margin: "2rem 0" }}>
+<a href="/chat" className="button">Start Chatting</a>
+<a href="/quiz" className="button">Take a Quiz</a>
+</div>
+<footer>
+<a href="/privacy">Privacy</a> | <a href="/help">Help</a>
+</footer>
+</main>
+</div>
+);
+}
+
+import Link from 'next/link';
+
+export default function Navbar() {
+return (
+<nav style={{ padding: "1rem", background: "#56CCF2", display: "flex", justifyContent: "space-between" }}>
+<span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>Youth Safe Space</span>
+<div>
+<Link href="/">Home</Link> |{" "}
+<Link href="/chat">Chat</Link> |{" "}
+<Link href="/quiz">Quizzes</Link> |{" "}
+<Link href="/profile">Profile</Link> |{" "}
+<Link href="/help">Help</Link>
+</div>
+</nav>
+);
+}
+
+import Navbar from '../components/Navbar';
+import Chatbot from '../components/Chatbot';
+
+export default function ChatPage() {
+return (
+<div>
+<Navbar />
+<main style={{ padding: "2rem" }}>
+<h2>💬 Chatbot & Community Chat</h2>
+<Chatbot />
+<hr />
+<h3>Community Chatroom (AI-moderated)</h3>
+<p>[Dummy chatroom UI here – all messages are checked for safety!]</p>
+</main>
+</div>
+);
+}
+
+import { useState } from 'react';
+
+export default function Chatbot() {
+const [messages, setMessages] = useState([
+{ from: 'bot', text: 'Hi! How can I help you today?' }
+]);
+const [input, setInput] = useState('');
+
+// Dummy AI moderation (real logic would call an AI API)
+function moderateAndReply(message) {
+if (/(badword|hate|selfharm)/i.test(message)) {
+return "I'm here to keep things safe—let's talk about something positive. If you need help, click [Help].";
+}
+// Dummy AI response
+if (/sad|depress|stress|help/i.test(message)) {
+return "I'm sorry you're feeling this way. Remember, you're not alone. Would you like some tips or resources?";
+}
+return "That's interesting! Tell me more.";
+}
+
+function sendMessage() {
+if (!input.trim()) return;
+const newMessages = [...messages, { from: 'user', text: input }];
+const botReply = moderateAndReply(input);
+setMessages([...newMessages, { from: 'bot', text: botReply }]);
+setInput('');
+}
+
+return (
+<div style={{ background: "#F6F6F6", padding: "1rem", borderRadius: "10px", marginBottom: "1rem" }}>
+<div style={{ minHeight: "100px", marginBottom: "1rem" }}>
+{messages.map((msg, i) => (
+<div key={i} style={{ textAlign: msg.from === 'bot' ? 'left' : 'right' }}>
+<b>{msg.from === 'bot' ? 'AI Bot' : 'You'}:</b> {msg.text}
+</div>
+))}
+</div>
+<input
+value={input}
+onChange={e => setInput(e.target.value)}
+placeholder="Say something..."
+style={{ width: "70%", marginRight: "0.5rem" }}
+onKeyDown={e => e.key === 'Enter' && sendMessage()}
+/>
+<button onClick={sendMessage}>Send</button>
+</div>
+);
+}
+
+import Navbar from '../components/Navbar';
+import Quiz from '../components/Quiz';
+
+export default function QuizPage() {
+return (
+<div>
+<Navbar />
+<main style={{ padding: "2rem" }}>
+<h2>🧩 Fun Quizzes & Games</h2>
+<Quiz />
+</main>
+</div>
+);
+}
+
+import { useState } from 'react';
+
+const questions = [
+{ q: "What's your favorite way to spend free time?", a: ["Reading", "Sports", "Drawing", "Talking to friends"] },
+{ q: "Which word describes you best?", a: ["Curious", "Creative", "Kind", "Adventurous"] },
+{ q: "What do you want from this community?", a: ["Support", "Fun", "Learning", "Friends"] }
+];
+
+export default function Quiz() {
+const [step, setStep] = useState(0);
+const [answers, setAnswers] = useState([]);
+
+if (step >= questions.length) {
+return (
+<div>
+<h3>🎉 Thanks for taking the quiz!</h3>
+<p>Your choices show you value: <b>{answers.join(", ")}</b>.</p>
+</div>
+);
+}
+
+return (
+<div>
+<p>{questions[step].q}</p>
+{questions[step].a.map((option, i) =>
+<button key={i} onClick={() => {
+setAnswers([...answers, option]);
+setStep(step + 1);
+}}>{option}</button>
+)}
+</div>
+);
+}
+
+import Navbar from '../components/Navbar';
+
+export default function Profile() {
+return (
+<div>
+<Navbar />
+<main style={{ padding: "2rem" }}>
+<h2>🧑 Your Profile</h2>
+<div style={{ background: "#F6F6F6", padding: "1rem", borderRadius: "10px", width: "300px", margin: "auto" }}>
+<div style={{ marginBottom: "1rem" }}>
+<img src="/images/avatar1.png" alt="avatar" style={{ width: "80px", borderRadius: "50%" }} />
+<button>Edit Avatar</button>
+</div>
+<p>Nickname: <b>Dreamer123</b></p>
+<p>Badges: <span>Kind Helper</span>, <span>Quiz Master</span></p>
+<a href="/privacy">View/Edit Privacy Settings</a>
+</div>
+</main>
+</div>
+);
+}
+
+# Privacy Policy – Youth Safe Space
+
+**Your safety and privacy are our top priority.**
+
+- We do **not** collect or display real names, addresses, or emails in public.
+- All chats and content are monitored by AI moderation to prevent bullying or harm.
+- You can report any content or user at any time.
+- All your data is encrypted and never sold or shared with third parties.
+- You can delete your account/data at any time.
+- For users under 18, we comply with COPPA and require parental consent for certain features.
+- For urgent help, click the "Help" button to access hotlines and support.
+
+*Questions? Contact our support team through the Help page.*
+
+# Community Guidelines
+
+- Be kind, inclusive, and respectful to everyone.
+- No bullying, hate, or inappropriate content—ever.
+- Keep your identity private; don’t share personal info.
+- Support others, report problems, and help us keep this space safe.
+- Have fun and express yourself!
+
+*Violations may result in content removal or account suspension.*
